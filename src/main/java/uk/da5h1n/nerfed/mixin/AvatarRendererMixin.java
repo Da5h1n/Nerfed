@@ -1,9 +1,15 @@
 package uk.da5h1n.nerfed.mixin;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.ClientAvatarEntity;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Avatar;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,6 +28,22 @@ public class AvatarRendererMixin<AvatarlikeEntity extends Avatar & ClientAvatarE
         if (entity instanceof Player player) {
             limbState.nerfed$setLeftArmDisabled(LimbDataHelper.isLeftArmDisabled(player));
             limbState.nerfed$setRightArmDisabled(LimbDataHelper.isRightArmDisabled(player));
+        }
+    }
+
+    @Inject(method = "renderRightHand", at = @At("HEAD"), cancellable = true)
+    private void hideRightHandFirstPerson(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, Identifier skinTexture, boolean hasSleeve, CallbackInfo ci) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null && LimbDataHelper.isRightArmDisabled(player)) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "renderLeftHand", at = @At("HEAD"), cancellable = true)
+    private void hideLeftHandFirstPerson(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, Identifier skinTexture, boolean hasSleeve, CallbackInfo ci) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null && LimbDataHelper.isLeftArmDisabled(player)) {
+            ci.cancel();
         }
     }
 }

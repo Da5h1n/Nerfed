@@ -10,6 +10,7 @@ import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.da5h1n.nerfed.command.DisableLimbCommand;
+import uk.da5h1n.nerfed.event.LimbInteractionHandler;
 import uk.da5h1n.nerfed.network.LimbSyncPayload;
 
 public class Nerfed implements ModInitializer {
@@ -25,6 +26,8 @@ public class Nerfed implements ModInitializer {
 		LOGGER.info("Initialising Nerfed");
 
 		PayloadTypeRegistry.clientboundPlay().register(LimbSyncPayload.TYPE, LimbSyncPayload.STREAM_CODEC);
+
+		LimbInteractionHandler.register();
 
 		CommandRegistrationCallback.EVENT.register(((dispatcher, buildContext, selection) -> {
 			DisableLimbCommand.register(dispatcher);

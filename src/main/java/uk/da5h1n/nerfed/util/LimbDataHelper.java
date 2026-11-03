@@ -5,6 +5,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import uk.da5h1n.nerfed.Nerfed;
 
@@ -51,5 +53,18 @@ public class LimbDataHelper {
             data.setRightDisabled(disabled);
         }
         player.setAttached(LIMB_DATA, data);
+    }
+
+    public static boolean isHandDisabled(Player player, InteractionHand hand) {
+        boolean isMain = (hand == InteractionHand.MAIN_HAND);
+        boolean isLeftMain = (player.getMainArm() == HumanoidArm.LEFT);
+
+        boolean isLeftHand = isMain ? isLeftMain : !isLeftMain;
+
+        return isLeftHand ? isLeftArmDisabled(player) : isRightArmDisabled(player);
+    }
+
+    public static boolean isMainArmDisabled(Player player) {
+        return isHandDisabled(player, InteractionHand.MAIN_HAND);
     }
 }

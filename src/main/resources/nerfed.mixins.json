@@ -5,7 +5,10 @@
 	"mixins": [
 		"HumanoidRenderStateMixin",
 		"AvatarRendererMixin",
-		"PlayerModelMixin"
+		"PlayerModelMixin",
+		"MultiPlayerGameModeMixin",
+		"PlayerItemInHandLayerMixin",
+		"ItemInHandRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
