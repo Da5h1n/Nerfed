@@ -4,14 +4,13 @@ import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.da5h1n.nerfed.command.DisableLimbCommand;
+import uk.da5h1n.nerfed.command.DisabilityCommand;
 import uk.da5h1n.nerfed.event.LimbInteractionHandler;
-import uk.da5h1n.nerfed.network.LimbSyncPayload;
+import uk.da5h1n.nerfed.network.DisabilitySyncPayload;
 
 public class Nerfed implements ModInitializer {
 	public static final String MOD_ID = "nerfed";
@@ -25,13 +24,14 @@ public class Nerfed implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Initialising Nerfed");
 
-		PayloadTypeRegistry.clientboundPlay().register(LimbSyncPayload.TYPE, LimbSyncPayload.STREAM_CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(DisabilitySyncPayload.TYPE, DisabilitySyncPayload.STREAM_CODEC);
 
 		LimbInteractionHandler.register();
 
-		CommandRegistrationCallback.EVENT.register(((dispatcher, buildContext, selection) -> {
-			DisableLimbCommand.register(dispatcher);
-		}));
+		// In your ModInitializer / Command registration event:
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+			DisabilityCommand.register(dispatcher);
+		});
 	}
 
 	public static Identifier id(String path) {

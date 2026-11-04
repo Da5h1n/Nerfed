@@ -6,4 +6,10 @@ public interface ILimbRenderState {
 
     boolean nerfed$isRightArmDisabled();
     void nerfed$setRightArmDisabled(boolean disabled);
+
+    boolean nerfed$isLeftLegDisabled();
+    void nerfed$setLeftLegDisabled(boolean disabled);
+
+    boolean nerfed$isRightLegDisabled();
+    void nerfed$setRightLegDisabled(boolean disabled);
 }

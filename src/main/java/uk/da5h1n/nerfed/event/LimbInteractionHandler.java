@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.world.InteractionResult;
-import uk.da5h1n.nerfed.util.LimbDataHelper;
+import uk.da5h1n.nerfed.util.DisabilityDataHelper;
 
 public class LimbInteractionHandler {
     public static void register() {
@@ -13,13 +13,13 @@ public class LimbInteractionHandler {
         PlayerBlockBreakEvents.BEFORE.register( (world, player, pos, state, blockEntity) -> {
             if (player.isSpectator()) return true;
 
-            return !LimbDataHelper.isMainArmDisabled(player);
+            return !DisabilityDataHelper.isMainArmDisabled(player);
         });
 
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (player.isSpectator()) return InteractionResult.PASS;
 
-            if (LimbDataHelper.isHandDisabled(player, hand)) {
+            if (DisabilityDataHelper.isHandDisabled(player, hand)) {
                 return InteractionResult.FAIL;
             }
             return InteractionResult.PASS;
@@ -28,7 +28,7 @@ public class LimbInteractionHandler {
         UseItemCallback.EVENT.register((player, world, hand) -> {
             if (player.isSpectator()) return InteractionResult.PASS;
 
-            if (LimbDataHelper.isHandDisabled(player, hand)) {
+            if (DisabilityDataHelper.isHandDisabled(player, hand)) {
                 return InteractionResult.FAIL;
             }
             return InteractionResult.PASS;
@@ -37,7 +37,7 @@ public class LimbInteractionHandler {
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if (player.isSpectator()) return InteractionResult.PASS;
 
-            if (LimbDataHelper.isHandDisabled(player, hand)) {
+            if (DisabilityDataHelper.isHandDisabled(player, hand)) {
                 return InteractionResult.FAIL;
             }
             return InteractionResult.PASS;

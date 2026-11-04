@@ -3,17 +3,21 @@
 	"package": "uk.da5h1n.nerfed.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
-		"HumanoidRenderStateMixin",
 		"AvatarRendererMixin",
-		"PlayerModelMixin",
+		"HumanoidRenderStateMixin",
+		"ItemInHandRendererMixin",
 		"MultiPlayerGameModeMixin",
 		"PlayerItemInHandLayerMixin",
-		"ItemInHandRendererMixin"
+		"PlayerLegsTickMixin",
+		"PlayerModelMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
 	},
 	"overwrites": {
 		"requireAnnotations": true
-	}
+	},
+	"client": [
+		"client.GameRendererMixin"
+	]
 }

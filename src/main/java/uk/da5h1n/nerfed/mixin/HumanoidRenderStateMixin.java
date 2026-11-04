@@ -9,6 +9,8 @@ import uk.da5h1n.nerfed.util.ILimbRenderState;
 public class HumanoidRenderStateMixin implements ILimbRenderState {
     @Unique public boolean nerfed$leftArmDisabled = false;
     @Unique public boolean nerfed$rightArmDisabled = false;
+    @Unique public boolean nerfed$leftLegDisabled = false;
+    @Unique public boolean nerfed$rightLegDisabled = false;
 
     @Override
     public boolean nerfed$isLeftArmDisabled() { return nerfed$leftArmDisabled; }
@@ -19,4 +21,14 @@ public class HumanoidRenderStateMixin implements ILimbRenderState {
     public boolean nerfed$isRightArmDisabled() { return nerfed$rightArmDisabled; }
     @Override
     public void nerfed$setRightArmDisabled(boolean disabled) { this.nerfed$rightArmDisabled = disabled; }
+
+    @Override
+    public boolean nerfed$isLeftLegDisabled() { return nerfed$leftLegDisabled; }
+    @Override
+    public void nerfed$setLeftLegDisabled(boolean disabled) { this.nerfed$leftLegDisabled = disabled; }
+
+    @Override
+    public boolean nerfed$isRightLegDisabled() { return nerfed$rightLegDisabled; }
+    @Override
+    public void nerfed$setRightLegDisabled(boolean disabled) { this.nerfed$rightLegDisabled = disabled; }
 }

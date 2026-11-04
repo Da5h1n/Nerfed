@@ -16,13 +16,16 @@ public class PlayerModelMixin {
 
     @Shadow @Final public ModelPart leftArm;
     @Shadow @Final public ModelPart rightArm;
+    @Shadow @Final public ModelPart leftLeg;
+    @Shadow @Final public ModelPart rightLeg;
 
     @Inject(method = "setupAnim(Lnet/minecraft/client/renderer/entity/state/HumanoidRenderState;)V", at = @At("TAIL"))
     private void hideDisabledLimbs(HumanoidRenderState state, CallbackInfo ci) {
-
         ILimbRenderState limbState = (ILimbRenderState) state;
 
         this.leftArm.visible = !limbState.nerfed$isLeftArmDisabled();
         this.rightArm.visible = !limbState.nerfed$isRightArmDisabled();
+        this.leftLeg.visible = !limbState.nerfed$isLeftLegDisabled();
+        this.rightLeg.visible = !limbState.nerfed$isRightLegDisabled();
     }
 }
