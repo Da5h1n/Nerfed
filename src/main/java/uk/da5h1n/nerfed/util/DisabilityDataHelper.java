@@ -12,10 +12,10 @@ import uk.da5h1n.nerfed.Nerfed;
 
 public class DisabilityDataHelper {
 
-    public static final AttachmentType<DisabilityData> DISABILITY_DATA = AttachmentRegistry.createPersistent(
-            Identifier.fromNamespaceAndPath(Nerfed.MOD_ID, "disability_data"),
-            DisabilityData.CODEC
-    );
+    public static final AttachmentType<DisabilityData> DISABILITY_DATA = AttachmentRegistry.<DisabilityData>builder()
+            .persistent(DisabilityData.CODEC)
+            .copyOnDeath()
+            .buildAndRegister(Identifier.fromNamespaceAndPath(Nerfed.MOD_ID, "disability_data"));
 
     public static class DisabilityData {
         private boolean leftArmDisabled;

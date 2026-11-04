@@ -1,0 +1,23 @@
+{
+  "targets": {
+    "swap": {}
+  },
+  "passes": [
+    {
+      "vertex_shader": "nerfed:post/fullscreen",
+      "fragment_shader": "nerfed:post/tunnel_vision",
+      "inputs": [
+        { "sampler_name": "In", "target": "minecraft:main" }
+      ],
+      "output": "swap"
+    },
+    {
+      "vertex_shader": "nerfed:post/fullscreen",
+      "fragment_shader": "nerfed:post/copy",
+      "inputs": [
+        { "sampler_name": "In", "target": "swap" }
+      ],
+      "output": "minecraft:main"
+    }
+  ]
+}

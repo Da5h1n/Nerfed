@@ -11,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import uk.da5h1n.nerfed.client.ColourblindRenderHandler;
-import uk.da5h1n.nerfed.util.DisabilityDataHelper;
 
 import java.util.List;
 
@@ -22,15 +21,14 @@ public abstract class GameRendererMixin {
     private List<Identifier> requestedPostEffects;
 
     @Inject(method = "update", at = @At("TAIL"))
-    private void nerfed$addColourblindEffect(DeltaTracker deltaTracker, CallbackInfo ci) {
+    private void nerfed$addDisabilityEffects(DeltaTracker deltaTracker, CallbackInfo ci) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
 
-        Identifier effect = ColourblindRenderHandler.effectFor(
-                DisabilityDataHelper.getColorblindMode(mc.player));
-
-        if (effect != null && !requestedPostEffects.contains(effect)) {
-            requestedPostEffects.add(effect);
+        for (Identifier effect : ColourblindRenderHandler.effectsFor(mc.player)) {
+            if (!requestedPostEffects.contains(effect)) {
+                requestedPostEffects.add(effect);
+            }
         }
     }
 }
