@@ -35,10 +35,12 @@ public class ColourblindRenderHandler {
     public static List<Identifier> effectsFor(Player player) {
         List<Identifier> effects = new ArrayList<>();
 
-        boolean tunnelVision = false;
-        if (tunnelVision) effects.add(TUNNEL_VISION);
+        DisabilityDataHelper.DisabilityData data = DisabilityDataHelper.getData(player);
 
-        Identifier colourblind = colourblindEffectFor(DisabilityDataHelper.getColorblindMode(player));
+        if (data.isTunnelVision()) effects.add(TUNNEL_VISION);
+        if (data.isMyopia()) effects.add(MYOPIA);
+
+        Identifier colourblind = colourblindEffectFor(data.getColorblindMode());
         if (colourblind != null) effects.add(colourblind);
 
         return effects;

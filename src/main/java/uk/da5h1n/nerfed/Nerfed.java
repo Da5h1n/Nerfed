@@ -61,3 +61,20 @@ public class Nerfed implements ModInitializer {
 		return Identifier.fromNamespaceAndPath(MOD_ID, path);
 	}
 }
+
+
+
+/*
+
+
+ TODO:
+
+ ADD INGAME WAY TO SEE ALL NERFS - ITEM?
+ ADD WAYS TO MITAGATE / remove NERFS
+
+ ADD MORE NERFS
+ ADD INTENSITY ?
+
+ FEEL IT NEEDS MORE "INTERACTION"
+
+ */

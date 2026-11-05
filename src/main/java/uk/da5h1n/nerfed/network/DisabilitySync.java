@@ -18,7 +18,12 @@ public class DisabilitySync {
                 data.getColorblindMode(),
                 data.isTunnelVision(),
                 data.isMyopia(),
-                data.isTremors()
+                data.isTremors(),
+                data.isAdhd(),
+                data.isVertigo(),
+                data.isScoliosis(),
+                data.isProsopagnosia(),
+                data.isSchizophrenia()
         ));
     }
 

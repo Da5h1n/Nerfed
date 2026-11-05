@@ -6,6 +6,7 @@
 		"AvatarRendererMixin",
 		"HumanoidRenderStateMixin",
 		"ItemInHandRendererMixin",
+		"LivingEntityPhantomMixin",
 		"MultiPlayerGameModeMixin",
 		"PlayerItemInHandLayerMixin",
 		"PlayerLegsTickMixin",
@@ -18,6 +19,8 @@
 		"requireAnnotations": true
 	},
 	"client": [
+		"client.AvatarRendererMixin",
+		"client.CameraMixin",
 		"client.GameRendererMixin"
 	]
 }

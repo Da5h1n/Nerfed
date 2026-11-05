@@ -20,68 +20,61 @@ import java.util.List;
 public class DisabilityCommand {
     private static final List<String> COLOURBLIND_MODES = List.of("protan", "deuteran", "tritan", "mono");
     private static final List<String> LIMBS = List.of("left_arm", "right_arm", "left_leg", "right_leg");
-    private static final List<String> OTHER = List.of("tunnel_vision", "myopia", "tremors");
+    private static final List<String> OTHER = List.of(
+            "tunnel_vision", "myopia", "tremors",
+            "adhd", "vertigo", "scoliosis", "prosopagnosia", "schizophrenia"
+    );
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> disability = Commands.literal("disability");
 
-        // /nerfed disability colourblind <protan|deuteran|tritan|mono> <true|false>
+        // /nerfed disability colourblind <protan|deuteran|tritan|mono> <apply|remove>
         // /nerfed disability colourblind disable
         LiteralArgumentBuilder<CommandSourceStack> colourblind = Commands.literal("colourblind");
         for (String mode : COLOURBLIND_MODES) {
             colourblind.then(Commands.literal(mode)
-                    .then(Commands.argument("value", BoolArgumentType.bool())
-                            .executes(ctx -> setColourblind(ctx, mode))));
+                    .then(Commands.literal("apply").executes(ctx -> setColourblind(ctx, mode, true)))
+                    .then(Commands.literal("remove").executes(ctx -> setColourblind(ctx, mode, false))));
         }
-        colourblind.then(Commands.literal("disable")
-                .executes(ctx -> clearColourblind(ctx)));
+        colourblind.then(Commands.literal("disable").executes(ctx -> clearColourblind(ctx)));
         disability.then(colourblind);
 
-        // /nerfed disability limbs <left_arm|right_arm|left_leg|right_leg> <true|false>
+        // /nerfed disability limbs <left_arm|right_arm|left_leg|right_leg> <apply|remove>
         LiteralArgumentBuilder<CommandSourceStack> limbs = Commands.literal("limbs");
         for (String limb : LIMBS) {
             limbs.then(Commands.literal(limb)
-                    .then(Commands.argument("value", BoolArgumentType.bool())
-                            .executes(ctx -> setBoolean(ctx, limb))));
+                    .then(Commands.literal("apply").executes(ctx -> setBoolean(ctx, limb, true)))
+                    .then(Commands.literal("remove").executes(ctx -> setBoolean(ctx, limb, false))));
         }
         disability.then(limbs);
 
-        // /nerfed disability <tunnel_vision|myopia|tremors> <true|false>
+        // Direct format: /nerfed disability <tunnel_vision|myopia|tremors|adhd|vertigo|scoliosis|prosopagnosia> <apply|remove>
         for (String other : OTHER) {
             disability.then(Commands.literal(other)
-                    .then(Commands.argument("value", BoolArgumentType.bool())
-                            .executes(ctx -> setBoolean(ctx, other))));
+                    .then(Commands.literal("apply").executes(ctx -> setBoolean(ctx, other, true)))
+                    .then(Commands.literal("remove").executes(ctx -> setBoolean(ctx, other, false))));
         }
-
         dispatcher.register(Commands.literal(Nerfed.MOD_ID).then(disability));
     }
 
-    private static int setBoolean(CommandContext<CommandSourceStack> ctx, String target) throws CommandSyntaxException {
+    private static int setBoolean(CommandContext<CommandSourceStack> ctx, String target, boolean apply) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
-        boolean value = BoolArgumentType.getBool(ctx, "value");
+
+        DisabilityDataHelper.setFlag(player, target, apply);
         DisabilityDataHelper.DisabilityData data = DisabilityDataHelper.getData(player);
 
-        switch (target) {
-            case "left_arm" -> data.setLeftArmDisabled(value);
-            case "right_arm" -> data.setRightArmDisabled(value);
-            case "left_leg" -> data.setLeftLegDisabled(value);
-            case "right_leg" -> data.setRightLegDisabled(value);
-            case "tunnel_vision" -> data.setTunnelVision(value);
-            case "myopia" -> data.setMyopia(value);
-            case "tremors" -> data.setTremors(value);
-        }
-
         saveAndSync(player, data);
-        player.sendSystemMessage(Component.literal("§c[Nerfed] §7Set " + target + " to: " + value));
+
+        String statusMsg = apply ? "§aapplied" : "§cremoved";
+        player.sendSystemMessage(Component.literal("§c[Nerfed] §7Successfully " + statusMsg + " §7condition: §e" + target));
         return 1;
     }
 
-    private static int setColourblind(CommandContext<CommandSourceStack> ctx, String mode) throws CommandSyntaxException {
+    private static int setColourblind(CommandContext<CommandSourceStack> ctx, String mode, boolean apply) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
-        boolean value = BoolArgumentType.getBool(ctx, "value");
         DisabilityDataHelper.DisabilityData data = DisabilityDataHelper.getData(player);
 
-        if (value) {
+        if (apply) {
             data.setColorblindMode(mode);
         } else if (mode.equalsIgnoreCase(data.getColorblindMode())) {
             data.setColorblindMode("none");
@@ -120,7 +113,12 @@ public class DisabilityCommand {
                 data.getColorblindMode(),
                 data.isTunnelVision(),
                 data.isMyopia(),
-                data.isTremors()
+                data.isTremors(),
+                data.isAdhd(),
+                data.isVertigo(),
+                data.isScoliosis(),
+                data.isProsopagnosia(),
+                data.isSchizophrenia()
         );
 
         for (ServerPlayer trackingPlayer : PlayerLookup.tracking(player)) {
