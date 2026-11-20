@@ -68,10 +68,21 @@ public class ConditionsScreen extends Screen {
         };
     }
 
+    //? if >26.3 {
     @Override
     public void extractRenderState(GuiGraphicsExtractor g) {
         super.extractRenderState(g);
+        renderContents(g);
+    }
+    //?} else {
+    /*@Override
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float a) {
+        super.extractRenderState(g, mouseX, mouseY, a);
+        renderContents(g);
+    }
+    *///?}
 
+    private void renderContents(GuiGraphicsExtractor g) {
         int panelW = Math.min(this.width - 20, 320);
         int panelH = Math.min(this.height - 20, 260);
         int px = (this.width - panelW) / 2;

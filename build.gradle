@@ -1,14 +1,38 @@
 plugins {
-	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom' version "${loom_version}" apply false
 	id 'maven-publish'
 }
 
+apply plugin: 'net.fabricmc.fabric-loom'
+apply plugin: 'maven-publish'
+
+def mcVersion = stonecutter.current.version
+def mcProp = { String key ->
+	if (project.hasProperty(key) && project.property(key) != null) {
+		return project.property(key).toString()
+	}
+	throw new GradleException("Missing property '${key}' for version ${mcVersion}")
+}
+
+def resolvedMcVersion = mcProp('minecraft_version')
+def resolvedFabricApi = mcProp('fabric_api_version')
+
+version = "${project.version}+${resolvedMcVersion}"
+group = project.group
+
+base {
+	archivesName = "${rootProject.name}-${resolvedMcVersion}"
+}
+
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
+	maven {
+		name = "Maxhenkel"
+		url = "https://maven.maxhenkel.de/repository/public"
+	}
+	maven {
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/"
+	}
 }
 
 fabricApi {
@@ -19,20 +43,31 @@ fabricApi {
 }
 
 dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	minecraft "com.mojang:minecraft:${resolvedMcVersion}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${resolvedFabricApi}"
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	// Simple Voice Chat API: compile-only, so it's optional at runtime
+	compileOnly "de.maxhenkel.voicechat:voicechat-api:${project.findProperty('voicechat_api_version') ?: '2.5.0'}"
+
+	// Mod Menu API: compile-only, not required at runtime
+	compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
 processResources {
-	def version = project.version
-	inputs.property "version", version
+	def modVer = project.version.toString()
+	def mcVer = resolvedMcVersion
+	def mcCompat = mcProp('minecraft_compat')
+	inputs.property "version", modVer
+	inputs.property "minecraft_version", mcVer
+	inputs.property "minecraft_compat", mcCompat
 
 	filesMatching("fabric.mod.json") {
-		expand "version": version
+		expand(
+				"version": modVer,
+				"minecraft_version": mcVer,
+				"minecraft_compat": mcCompat
+		)
 	}
 }
 
@@ -41,9 +76,6 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
 	sourceCompatibility = JavaVersion.VERSION_25
@@ -65,13 +97,5 @@ publishing {
 		create("mavenJava", MavenPublication) {
 			from components.java
 		}
-	}
-
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
 	}
 }

@@ -16,6 +16,11 @@ import uk.da5h1n.nerfed.Nerfed;
 import uk.da5h1n.nerfed.util.Condition;
 import uk.da5h1n.nerfed.util.DisabilityDataHelper;
 import uk.da5h1n.nerfed.util.Strength;
+//? if >26.3 {
+
+//?} else {
+/*import net.minecraft.world.level.block.SoundType;
+*///?}
 
 import java.util.*;
 
@@ -55,7 +60,11 @@ public class SchizophreniaHandler {
             new HallucinationSound(SoundEvents.ENDERMAN_STARE,       4,  8, true,  0.6F, 0.8F, 1.0F, 2, 20 * 180, true),
             new HallucinationSound(SoundEvents.GHAST_SCREAM,         6, 12, false, 0.5F, 0.8F, 1.0F, 1, 20 * 240, true),
             new HallucinationSound(SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, 3, 6, true, 0.7F, 0.9F, 1.1F, 2, 20 * 150, true),
+            //? if >26.3 {
             new HallucinationSound(block(SoundEvents.GLASS.breakSound()),          3,  7, true,  0.7F, 0.9F, 1.1F, 2, 20 * 150, true),
+             //?} else {
+            /*new HallucinationSound(SoundType.GLASS.getBreakSound(),                3,  7, true,  0.7F, 0.9F, 1.1F, 2, 20 * 150, true),
+            *///?}
             new HallucinationSound(SoundEvents.SKELETON_SHOOT,       3,  6, true,  0.7F, 0.9F, 1.1F, 2, 20 * 150, true),
             new HallucinationSound(SoundEvents.WARDEN_HEARTBEAT,     0,  1, false, 0.8F, 0.9F, 1.0F, 1, 20 * 240, true),
 
@@ -69,8 +78,13 @@ public class SchizophreniaHandler {
             new HallucinationSound(SoundEvents.WOODEN_DOOR_OPEN,     5, 12, false, 0.5F, 0.9F, 1.0F, 3, 20 * 60,  false),
             new HallucinationSound(SoundEvents.WOODEN_DOOR_CLOSE,    5, 12, false, 0.5F, 0.9F, 1.0F, 3, 20 * 60,  false),
             new HallucinationSound(SoundEvents.CHEST_OPEN,           4, 10, false, 0.5F, 0.9F, 1.0F, 2, 20 * 90,  false),
+            //? if >26.3 {
             new HallucinationSound(block(SoundEvents.GRAVEL.stepSound()),          2,  5, true,  0.5F, 0.8F, 1.0F, 3, 20 * 45,  false),
             new HallucinationSound(block(SoundEvents.STONE.stepSound()),           2,  5, true,  0.5F, 0.8F, 1.0F, 3, 20 * 45,  false)
+            //?} else {
+            /*new HallucinationSound(SoundType.GRAVEL.getStepSound(),                2,  5, true,  0.5F, 0.8F, 1.0F, 3, 20 * 45,  false),
+            new HallucinationSound(SoundType.STONE.getStepSound(),                 2,  5, true,  0.5F, 0.8F, 1.0F, 3, 20 * 45,  false)
+            *///?}
     );
 
     private static long lastStartle = -1_000_000L;

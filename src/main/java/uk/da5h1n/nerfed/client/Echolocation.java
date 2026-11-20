@@ -19,6 +19,11 @@ import org.joml.Matrix4f;
 import uk.da5h1n.nerfed.item.ModItems;
 import uk.da5h1n.nerfed.util.Condition;
 import uk.da5h1n.nerfed.util.DisabilityDataHelper;
+//? if >26.3 {
+
+//?} else {
+/*import net.minecraft.world.level.block.SoundType;
+*///?}
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +53,11 @@ public class Echolocation {
     private static final float[][] ECHO_GAIN  = {{0f, 0f}, {0.4f, 0.55f}, {0.7f, 1.0f}, {1f, 1.4f}};
     private static final float[][] BLUR_PX    = {{0f, 0f}, {0.4f, 2.5f}, {0.7f, 3.0f}, {1f, 0f}};
 
+    //? if >26.3 {
     private static final SoundEvent TAP_SOUND = SoundEvents.WOOD.stepSound().map(Holder::value).orElseThrow();
+    //?} else {
+    /*private static final SoundEvent TAP_SOUND = SoundType.WOOD.getStepSound();
+    *///?}
     private static final Random RANDOM = new Random();
 
     // ----------------------------------------------------------------- state

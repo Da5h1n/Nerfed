@@ -1,28 +1,20 @@
 package uk.da5h1n.nerfed.command;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import uk.da5h1n.nerfed.Nerfed;
 import uk.da5h1n.nerfed.network.ConditionsViewer;
 import uk.da5h1n.nerfed.network.DisabilitySync;
-import uk.da5h1n.nerfed.network.DisabilitySyncPayload;
 import uk.da5h1n.nerfed.util.Condition;
 import uk.da5h1n.nerfed.util.DisabilityDataHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DisabilityCommand {
@@ -35,20 +27,31 @@ public class DisabilityCommand {
         // /nerfed disability colourblind disable
         LiteralArgumentBuilder<CommandSourceStack> colourblind = Commands.literal("colourblind");
         for (String mode : COLOURBLIND_MODES) {
-            colourblind.then(Commands.literal(mode)
-                    .then(levelArgument(Condition.COLOURBLIND_MAX_LEVEL)
-                            .executes(ctx -> setColourblind(ctx, mode))));
+            LiteralArgumentBuilder<CommandSourceStack> modeNode = Commands.literal(mode);
+            for (int i = 0; i <= Condition.COLOURBLIND_MAX_LEVEL; i++) {
+                final int level = i;
+                modeNode.then(Commands.literal(String.valueOf(level))
+                        .executes(ctx -> setColourblind(ctx, mode, level)));
+            }
+            colourblind.then(modeNode);
         }
         colourblind.then(Commands.literal("disable").executes(DisabilityCommand::clearColourblind));
         disability.then(colourblind);
 
         // /nerfed disability limbs <left_arm|...> <level>
         // /nerfed disability <tunnel_vision|myopia|...> <level>
+        //
+        // Levels are registered as literal nodes (0..max) rather than an argument type.
+        // This works on every version and gives tab-completion for free. 26.4 rejects
+        // Brigadier's StringArgumentType in its rebuilt command tree.
         LiteralArgumentBuilder<CommandSourceStack> limbs = Commands.literal("limbs");
         for (Condition condition : Condition.values()) {
-            LiteralArgumentBuilder<CommandSourceStack> node = Commands.literal(condition.id())
-                    .then(levelArgument(condition.maxLevel())
-                            .executes(ctx -> setLevel(ctx, condition)));
+            LiteralArgumentBuilder<CommandSourceStack> node = Commands.literal(condition.id());
+            for (int i = 0; i <= condition.maxLevel(); i++) {
+                final int level = i;
+                node.then(Commands.literal(String.valueOf(level))
+                        .executes(ctx -> setLevel(ctx, condition, level)));
+            }
             if (condition.category() == Condition.Category.LIMBS) limbs.then(node);
             else disability.then(node);
         }
@@ -72,18 +75,8 @@ public class DisabilityCommand {
         dispatcher.register(Commands.literal(Nerfed.MOD_ID).then(disability).then(show));
     }
 
-    private static RequiredArgumentBuilder<CommandSourceStack, Integer> levelArgument(int max) {
-        return Commands.argument("level", IntegerArgumentType.integer(0, max))
-                .suggests((ctx, builder) -> {
-                    List<String> options = new ArrayList<>();
-                    for ( int i = 0; i <= max; i++) options.add(String.valueOf(i));
-                    return SharedSuggestionProvider.suggest(options, builder);
-                });
-    }
-
-    private static int setLevel(CommandContext<CommandSourceStack> ctx, Condition condition) throws CommandSyntaxException {
+    private static int setLevel(CommandContext<CommandSourceStack> ctx, Condition condition, int level) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
-        int level = IntegerArgumentType.getInteger(ctx, "level");
         DisabilityDataHelper.DisabilityData data = DisabilityDataHelper.getData(player);
 
         data.setLevel(condition, level);
@@ -94,9 +87,8 @@ public class DisabilityCommand {
         return 1;
     }
 
-    private static int setColourblind(CommandContext<CommandSourceStack> ctx, String mode) throws CommandSyntaxException {
+    private static int setColourblind(CommandContext<CommandSourceStack> ctx, String mode, int level) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
-        int level = IntegerArgumentType.getInteger(ctx, "level");
         DisabilityDataHelper.DisabilityData data = DisabilityDataHelper.getData(player);
 
         if (level > 0) {
