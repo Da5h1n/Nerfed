@@ -15,8 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.da5h1n.nerfed.command.DisabilityCommand;
 import uk.da5h1n.nerfed.event.LimbInteractionHandler;
+import uk.da5h1n.nerfed.event.MuteHandler;
+import uk.da5h1n.nerfed.item.ModItems;
 import uk.da5h1n.nerfed.network.DisabilitySync;
 import uk.da5h1n.nerfed.network.DisabilitySyncPayload;
+import uk.da5h1n.nerfed.network.OpenConditionsScreenPayload;
 
 public class Nerfed implements ModInitializer {
 	public static final String MOD_ID = "nerfed";
@@ -31,8 +34,12 @@ public class Nerfed implements ModInitializer {
 		LOGGER.info("Initialising Nerfed");
 
 		PayloadTypeRegistry.clientboundPlay().register(DisabilitySyncPayload.TYPE, DisabilitySyncPayload.STREAM_CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(OpenConditionsScreenPayload.TYPE, OpenConditionsScreenPayload.STREAM_CODEC);
+
+		ModItems.init();
 
 		LimbInteractionHandler.register();
+		MuteHandler.register();
 
 		// In your ModInitializer / Command registration event:
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {

@@ -7,21 +7,14 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import uk.da5h1n.nerfed.Nerfed;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public record DisabilitySyncPayload(
         int entityId,
-        boolean leftArmDisabled,
-        boolean rightArmDisabled,
-        boolean leftLegDisabled,
-        boolean rightLegDisabled,
+        Map<String, Integer> levels,
         String colorblindMode,
-        boolean tunnelVision,
-        boolean myopia,
-        boolean tremors,
-        boolean adhd,
-        boolean vertigo,
-        boolean scoliosis,
-        boolean prosopagnosia,
-        boolean schizophrenia
+        int colorblindLevel
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<DisabilitySyncPayload> TYPE =
@@ -29,19 +22,10 @@ public record DisabilitySyncPayload(
 
     public static final StreamCodec<FriendlyByteBuf, DisabilitySyncPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, DisabilitySyncPayload::entityId,
-            ByteBufCodecs.BOOL, DisabilitySyncPayload::leftArmDisabled,
-            ByteBufCodecs.BOOL, DisabilitySyncPayload::rightArmDisabled,
-            ByteBufCodecs.BOOL, DisabilitySyncPayload::leftLegDisabled,
-            ByteBufCodecs.BOOL, DisabilitySyncPayload::rightLegDisabled,
+            ByteBufCodecs.<FriendlyByteBuf, String, Integer, Map<String, Integer>>map(
+                    HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.VAR_INT), DisabilitySyncPayload::levels,
             ByteBufCodecs.STRING_UTF8, DisabilitySyncPayload::colorblindMode,
-            ByteBufCodecs.BOOL, DisabilitySyncPayload::tunnelVision,
-            ByteBufCodecs.BOOL, DisabilitySyncPayload::myopia,
-            ByteBufCodecs.BOOL, DisabilitySyncPayload::tremors,
-            ByteBufCodecs.BOOL, DisabilitySyncPayload::adhd,
-            ByteBufCodecs.BOOL, DisabilitySyncPayload::vertigo,
-            ByteBufCodecs.BOOL, DisabilitySyncPayload::scoliosis,
-            ByteBufCodecs.BOOL, DisabilitySyncPayload::prosopagnosia,
-            ByteBufCodecs.BOOL, DisabilitySyncPayload::schizophrenia,
+            ByteBufCodecs.VAR_INT, DisabilitySyncPayload::colorblindLevel,
             DisabilitySyncPayload::new
     );
 

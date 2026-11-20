@@ -1,0 +1,49 @@
+{
+  "targets": { "swap": {} },
+  "passes": [
+    {
+      "vertex_shader": "nerfed:post/fullscreen",
+      "fragment_shader": "nerfed:post/blindness",
+      "inputs": [
+        { "sampler_name": "In", "target": "minecraft:main" },
+        { "sampler_name": "Depth", "target": "minecraft:main", "use_depth_buffer": true }
+      ],
+      "output": "swap",
+      "uniforms": {
+        "BlindnessConfig": [
+          {"type":"float","value":1.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},
+          {"type":"float","value":0.0},{"type":"float","value":1.0},{"type":"float","value":0.0},{"type":"float","value":0.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":1.0},{"type":"float","value":0.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":1.0},
+          {"type":"float","value":1.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},
+          {"type":"float","value":0.0},{"type":"float","value":1.0},{"type":"float","value":0.0},{"type":"float","value":0.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":1.0},{"type":"float","value":0.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":1.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":-1.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":-1.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":-1.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":-1.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":-1.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":-1.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":-1.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":-1.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":-1.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":-1.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":-1.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":-1.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":-1.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":-1.0},
+          {"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":0.0},{"type":"float","value":-1.0}
+        ]
+      }
+    },
+    {
+      "vertex_shader": "nerfed:post/fullscreen",
+      "fragment_shader": "nerfed:post/copy",
+      "inputs": [ { "sampler_name": "In", "target": "swap" } ],
+      "output": "minecraft:main"
+    }
+  ]
+}

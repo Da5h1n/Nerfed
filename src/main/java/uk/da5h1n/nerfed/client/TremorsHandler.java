@@ -2,7 +2,9 @@ package uk.da5h1n.nerfed.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.RandomSource;
+import uk.da5h1n.nerfed.util.Condition;
 import uk.da5h1n.nerfed.util.DisabilityDataHelper;
+import uk.da5h1n.nerfed.util.Strength;
 
 public class TremorsHandler {
 
@@ -12,7 +14,7 @@ public class TremorsHandler {
         if (client.player == null || client.level == null) return;
 
         if (DisabilityDataHelper.isTremors(client.player)) {
-            float intensity = 0.15f;
+            float intensity = 0.15f * Strength.of(client.player, Condition.TREMORS);
             float yawJitter = (RANDOM.nextFloat() - 0.5f) * intensity;
             float pitchJitter = (RANDOM.nextFloat() - 0.5f) * intensity;
 

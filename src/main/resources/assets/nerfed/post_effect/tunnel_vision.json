@@ -7,15 +7,33 @@
       "vertex_shader": "nerfed:post/fullscreen",
       "fragment_shader": "nerfed:post/tunnel_vision",
       "inputs": [
-        { "sampler_name": "In", "target": "minecraft:main" }
+        {
+          "sampler_name": "In",
+          "target": "minecraft:main"
+        }
       ],
-      "output": "swap"
+      "output": "swap",
+      "uniforms": {
+        "TunnelConfig": [
+          {
+            "type": "float",
+            "value": 0.15
+          },
+          {
+            "type": "float",
+            "value": 0.6
+          }
+        ]
+      }
     },
     {
       "vertex_shader": "nerfed:post/fullscreen",
       "fragment_shader": "nerfed:post/copy",
       "inputs": [
-        { "sampler_name": "In", "target": "swap" }
+        {
+          "sampler_name": "In",
+          "target": "swap"
+        }
       ],
       "output": "minecraft:main"
     }

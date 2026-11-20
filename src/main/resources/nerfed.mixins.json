@@ -21,6 +21,9 @@
 	"client": [
 		"client.AvatarRendererMixin",
 		"client.CameraMixin",
-		"client.GameRendererMixin"
+		"client.ChannelMixin",
+		"client.GameRendererMixin",
+		"client.PostPassMixin",
+		"client.SoundEngineMixin"
 	]
 }

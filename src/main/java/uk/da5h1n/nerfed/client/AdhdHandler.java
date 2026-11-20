@@ -2,7 +2,9 @@ package uk.da5h1n.nerfed.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.RandomSource;
+import uk.da5h1n.nerfed.util.Condition;
 import uk.da5h1n.nerfed.util.DisabilityDataHelper;
+import uk.da5h1n.nerfed.util.Strength;
 
 public class AdhdHandler {
 
@@ -15,7 +17,9 @@ public class AdhdHandler {
         if (DisabilityDataHelper.isAdhd(client.player)) {
             ticksUntilNextSwitch--;
             if (ticksUntilNextSwitch <= 0) {
-                ticksUntilNextSwitch = 100 + RANDOM.nextInt(200);
+
+                float strength = Strength.of(client.player, Condition.ADHD);
+                ticksUntilNextSwitch = (int) ((100 + RANDOM.nextInt(200)) / strength);
 
                 int currentSlot = client.player.getInventory().getSelectedSlot();
                 int newSlot;

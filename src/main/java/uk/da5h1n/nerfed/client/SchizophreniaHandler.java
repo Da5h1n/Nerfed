@@ -13,7 +13,9 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import uk.da5h1n.nerfed.Nerfed;
+import uk.da5h1n.nerfed.util.Condition;
 import uk.da5h1n.nerfed.util.DisabilityDataHelper;
+import uk.da5h1n.nerfed.util.Strength;
 
 import java.util.*;
 
@@ -104,17 +106,19 @@ public class SchizophreniaHandler {
             return;
         }
 
-        tickAuditory(client);
+        float strength = Strength.of(client.player, Condition.SCHIZOPHRENIA);
+
+        tickAuditory(client, strength);
 
         if (++phantomTimer >= PHANTOM_CHECK_INTERVAL) {
             phantomTimer = 0;
-            if (activePhantoms.isEmpty() && RANDOM.nextFloat() < PHANTOM_CHANCE) {
+            if (activePhantoms.isEmpty() && RANDOM.nextFloat() < PHANTOM_CHANCE * strength) {
                 spawnPhantom(client);
             }
         }
     }
 
-    private static void tickAuditory(Minecraft client) {
+    private static void tickAuditory(Minecraft client, float strength) {
         var player = client.player;
         var level = client.level;
 
@@ -130,26 +134,31 @@ public class SchizophreniaHandler {
         if (sky == 0 && block <= 1) rate *= 2.0;
         else if (sky > 8)           rate *= 0.5;
         if (player.getHealth() <= 6.0F) rate *= 1.5;
+        rate *= strength;
 
         moodiness += rate;
 
         // Mood readout once per second
         if (++moodLogTimer >= 20) {
             moodLogTimer = 0;
-            Nerfed.LOGGER.info("[Schizophrenia] mood={}/1.00  perSec={}  sky={} block={}  hp={}",
+            Nerfed.LOGGER.info("[Schizophrenia] mood={}/1.00  perSec={}  sky={} block={}  hp={}  strength={}",
                     String.format("%.2f", moodiness), String.format("%.3f", rate * 20),
-                    sky, block, player.getHealth());
+                    sky, block, player.getHealth(), String.format("%.1f", strength));
+
         }
 
         if (moodiness >= 1.0) {
             Nerfed.LOGGER.info("[Schizophrenia] mood full, triggering a hallucination");
-            triggerAuditoryHallucination(client, probe);
+            triggerAuditoryHallucination(client, probe, strength);
             moodiness = RANDOM.nextDouble() * 0.3;
         }
     }
 
-    private static void triggerAuditoryHallucination(Minecraft client, BlockPos probe) {
+    private static void triggerAuditoryHallucination(Minecraft client, BlockPos probe, float strength) {
         long now = client.level.getGameTime();
+
+        boolean allowStartle = strength >= 0.7F;
+        long startleCooldown = (long)(STARTLE_GLOBAL_COOLDOWN / strength);
 
         List<HallucinationSound> available = new ArrayList<>();
         for (HallucinationSound s : SOUNDS) {
@@ -190,7 +199,8 @@ public class SchizophreniaHandler {
         }
 
         float pitch = chosen.minPitch() + RANDOM.nextFloat() * (chosen.maxPitch() - chosen.minPitch());
-        client.level.playLocalSound(x, y, z, chosen.sound(), SOUND_CATEGORY, chosen.volume(), pitch, false);
+        float volume = chosen.volume() * (0.6F + 0.4F * strength);
+        client.level.playLocalSound(x, y, z, chosen.sound(), SOUND_CATEGORY, volume, pitch, false);
 
         lastPlayed.put(chosen.sound(), now);
         if (chosen.startle()) lastStartle = now;

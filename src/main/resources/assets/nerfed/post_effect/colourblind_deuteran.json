@@ -7,18 +7,33 @@
       "vertex_shader": "nerfed:post/fullscreen",
       "fragment_shader": "nerfed:post/colourblind",
       "inputs": [
-        { "sampler_name": "In", "target": "minecraft:main" }
+        {
+          "sampler_name": "In",
+          "target": "minecraft:main"
+        }
       ],
       "output": "swap",
       "uniforms": {
-        "ColourblindConfig": [ { "type": "int", "value": 2 } ]
+        "ColourblindConfig": [
+          {
+            "type": "int",
+            "value": 2
+          },
+          {
+            "type": "float",
+            "value": 1.0
+          }
+        ]
       }
     },
     {
       "vertex_shader": "nerfed:post/fullscreen",
       "fragment_shader": "nerfed:post/copy",
       "inputs": [
-        { "sampler_name": "In", "target": "swap" }
+        {
+          "sampler_name": "In",
+          "target": "swap"
+        }
       ],
       "output": "minecraft:main"
     }

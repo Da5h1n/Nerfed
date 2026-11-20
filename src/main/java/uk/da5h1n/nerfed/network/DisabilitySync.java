@@ -11,19 +11,9 @@ public class DisabilitySync {
         DisabilityDataHelper.DisabilityData data = DisabilityDataHelper.getData(subject);
         ServerPlayNetworking.send(recipient, new DisabilitySyncPayload(
                 subject.getId(),
-                data.isLeftArmDisabled(),
-                data.isRightArmDisabled(),
-                data.isLeftLegDisabled(),
-                data.isRightLegDisabled(),
+                data.levelsById(),
                 data.getColorblindMode(),
-                data.isTunnelVision(),
-                data.isMyopia(),
-                data.isTremors(),
-                data.isAdhd(),
-                data.isVertigo(),
-                data.isScoliosis(),
-                data.isProsopagnosia(),
-                data.isSchizophrenia()
+                data.getColorblindLevel()
         ));
     }
 

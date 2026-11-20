@@ -1,0 +1,45 @@
+{
+  "targets": {
+    "swap": {}
+  },
+  "passes": [
+    {
+      "vertex_shader": "nerfed:post/fullscreen",
+      "fragment_shader": "nerfed:post/double_vision",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "minecraft:main"
+        }
+      ],
+      "output": "swap",
+      "uniforms": {
+        "DoubleVisionConfig": [
+          {
+            "type": "float",
+            "value": 0.016
+          },
+          {
+            "type": "float",
+            "value": 0.0
+          },
+          {
+            "type": "float",
+            "value": 0.5
+          }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "nerfed:post/fullscreen",
+      "fragment_shader": "nerfed:post/copy",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "swap"
+        }
+      ],
+      "output": "minecraft:main"
+    }
+  ]
+}

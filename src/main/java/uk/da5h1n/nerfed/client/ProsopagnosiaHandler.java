@@ -4,7 +4,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import uk.da5h1n.nerfed.util.Condition;
 import uk.da5h1n.nerfed.util.DisabilityDataHelper;
+import uk.da5h1n.nerfed.util.Strength;
 
 import java.util.*;
 
@@ -36,7 +38,12 @@ public class ProsopagnosiaHandler {
         // Don't scramble the local player's own identity
         if (entityId == mc.player.getId()) return null;
 
-        long timeBucket = mc.level.getGameTime() / SWAP_INTERVAL_TICKS;
+        long gameTime = mc.level.getGameTime();
+
+        float strength = Strength.of(mc.player, Condition.PROSOPAGNOSIA);
+        if (gameTime % SWAP_INTERVAL_TICKS >= SWAP_INTERVAL_TICKS * strength) return null;
+
+        long timeBucket = gameTime / SWAP_INTERVAL_TICKS;
 
         // Recompute the swap mapping if the 10-second time bucket has advanced
         if (timeBucket != cachedTimeBucket) {

@@ -10,7 +10,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import uk.da5h1n.nerfed.Nerfed;
 
-import java.util.Locale;
+import java.util.*;
 
 public class DisabilityDataHelper {
 
@@ -20,89 +20,121 @@ public class DisabilityDataHelper {
             .buildAndRegister(Identifier.fromNamespaceAndPath(Nerfed.MOD_ID, "disability_data"));
 
     public static class DisabilityData {
-        private boolean leftArmDisabled;
-        private boolean rightArmDisabled;
-        private boolean leftLegDisabled;
-        private boolean rightLegDisabled;
+        public static final Codec<DisabilityData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.unboundedMap(Codec.STRING, Codec.INT).fieldOf("levels").orElse(Map.of()).forGetter(DisabilityData::levelsById),
+                Codec.STRING.fieldOf("colorblind_mode").orElse("none").forGetter(o -> o.colorblindMode),
+                Codec.INT.fieldOf("colorblind_level").orElse(0).forGetter(o -> o.colorblindLevel)
+        ).apply(instance, DisabilityData::fromCodec));
 
-        // Sensory & Neurological & Physical States
-        private String colorblindMode; // "none", "protan", "deuteran", "tritan", "mono"
-        private boolean tunnelVision;
-        private boolean myopia;
-        private boolean tremors;
-        private boolean adhd;
-        private boolean vertigo;
-        private boolean scoliosis;
-        private boolean prosopagnosia;
-        private boolean schizophrenia;
+        private final Map<Condition, Integer> levels = new EnumMap<>(Condition.class);
+        private String colorblindMode = "none";
+        private int colorblindLevel = 0;
 
-        public DisabilityData(boolean leftArm, boolean rightArm, boolean leftLeg, boolean rightLeg,
-                              String colorblindMode, boolean tunnelVision, boolean myopia, boolean tremors,
-                              boolean adhd, boolean vertigo, boolean scoliosis, boolean prosopagnosia, boolean schizophrenia) {
-            this.leftArmDisabled = leftArm;
-            this.rightArmDisabled = rightArm;
-            this.leftLegDisabled = leftLeg;
-            this.rightLegDisabled = rightLeg;
-            this.colorblindMode = colorblindMode != null ? colorblindMode : "none";
-            this.tunnelVision = tunnelVision;
-            this.myopia = myopia;
-            this.tremors = tremors;
-            this.adhd = adhd;
-            this.vertigo = vertigo;
-            this.scoliosis = scoliosis;
-            this.prosopagnosia = prosopagnosia;
-            this.schizophrenia = schizophrenia;
+        private static DisabilityData fromCodec(Map<String, Integer> byId, String mode, int level) {
+            DisabilityData data = new DisabilityData();
+            data.applyFrom(byId, mode, level);
+            return data;
         }
 
-        public static final Codec<DisabilityData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.BOOL.fieldOf("left_arm").orElse(false).forGetter(o -> o.leftArmDisabled),
-                Codec.BOOL.fieldOf("right_arm").orElse(false).forGetter(o -> o.rightArmDisabled),
-                Codec.BOOL.fieldOf("left_leg").orElse(false).forGetter(o -> o.leftLegDisabled),
-                Codec.BOOL.fieldOf("right_leg").orElse(false).forGetter(o -> o.rightLegDisabled),
-                Codec.STRING.fieldOf("colorblind_mode").orElse("none").forGetter(o -> o.colorblindMode),
-                Codec.BOOL.fieldOf("tunnel_vision").orElse(false).forGetter(o -> o.tunnelVision),
-                Codec.BOOL.fieldOf("myopia").orElse(false).forGetter(o -> o.myopia),
-                Codec.BOOL.fieldOf("tremors").orElse(false).forGetter(o -> o.tremors),
-                Codec.BOOL.fieldOf("adhd").orElse(false).forGetter(o -> o.adhd),
-                Codec.BOOL.fieldOf("vertigo").orElse(false).forGetter(o -> o.vertigo),
-                Codec.BOOL.fieldOf("scoliosis").orElse(false).forGetter(o -> o.scoliosis),
-                Codec.BOOL.fieldOf("prosopagnosia").orElse(false).forGetter(o -> o.prosopagnosia),
-                Codec.BOOL.fieldOf("schizophrenia").orElse(false).forGetter(o -> o.schizophrenia)
-        ).apply(instance, DisabilityData::new));
+        public int getLevel(Condition c) { return levels.getOrDefault(c, 0); }
 
-        // Getters & Setters
-        public boolean isLeftArmDisabled() { return leftArmDisabled; }
-        public void setLeftArmDisabled(boolean v) { this.leftArmDisabled = v; }
-        public boolean isRightArmDisabled() { return rightArmDisabled; }
-        public void setRightArmDisabled(boolean v) { this.rightArmDisabled = v; }
-        public boolean isLeftLegDisabled() { return leftLegDisabled; }
-        public void setLeftLegDisabled(boolean v) { this.leftLegDisabled = v; }
-        public boolean isRightLegDisabled() { return rightLegDisabled; }
-        public void setRightLegDisabled(boolean v) { this.rightLegDisabled = v; }
+        public boolean has(Condition c) { return getLevel(c) > 0; }
+
+        public void setLevel(Condition c, int level) {
+            int clamped = Math.max(0, Math.min(level, c.maxLevel()));
+            if (clamped == 0) levels.remove(c);
+            else levels.put(c, clamped);
+        }
 
         public String getColorblindMode() { return colorblindMode; }
-        public void setColorblindMode(String mode) { this.colorblindMode = mode; }
-        public boolean isTunnelVision() { return tunnelVision; }
-        public void setTunnelVision(boolean v) { this.tunnelVision = v; }
-        public boolean isMyopia() { return myopia; }
-        public void setMyopia(boolean v) { this.myopia = v; }
-        public boolean isTremors() { return tremors; }
-        public void setTremors(boolean v) { this.tremors = v; }
-        public boolean isAdhd() { return adhd; }
-        public void setAdhd(boolean v) { this.adhd = v; }
-        public boolean isVertigo() { return vertigo; }
-        public void setVertigo(boolean v) { this.vertigo = v; }
-        public boolean isScoliosis() { return scoliosis; }
-        public void setScoliosis(boolean v) { this.scoliosis = v; }
-        public boolean isProsopagnosia() { return prosopagnosia; }
-        public void setProsopagnosia(boolean v) { this.prosopagnosia = v; }
-        public boolean isSchizophrenia() { return schizophrenia; }
-        public void setSchizophrenia(boolean v) { this.schizophrenia = v; }
+        public int getColorblindLevel() { return colorblindLevel; }
+
+        public void setColorblind(String mode, int level) {
+            if (mode == null || mode.equalsIgnoreCase("none") || level <= 0) {
+                colorblindMode = "none";
+                colorblindLevel = 0;
+            } else {
+                colorblindMode = mode.toLowerCase(Locale.ROOT);
+                colorblindLevel = Math.min(level, Condition.COLOURBLIND_MAX_LEVEL);
+            }
+        }
+
+        public void setColorblindMode(String mode) {
+            boolean off = mode == null || mode.equalsIgnoreCase("none");
+            setColorblind(mode, off ? 0 : (colorblindLevel > 0 ? colorblindLevel : Condition.COLOURBLIND_MAX_LEVEL));
+        }
+
+        public  Map<String, Integer> levelsById() {
+            Map<String, Integer> out = new LinkedHashMap<>();
+            for (Condition c : Condition.values()) {
+                int level = getLevel(c);
+                if (level > 0) out.put(c.id(), level);
+            }
+            return out;
+        }
+
+        public Map<String, Integer> activeLevels() {
+            Map<String, Integer> out = levelsById();
+            if (colorblindLevel > 0 && !colorblindMode.equals("none")) {
+                out.put("colourblind_" + colorblindMode, colorblindLevel);
+            }
+            return out;
+        }
+
+        public void applyFrom(Map<String, Integer> byId, String mode, int level) {
+            levels.clear();
+            for (Condition c : Condition.values()) {
+                setLevel(c, byId.getOrDefault(c.id(), 0));
+            }
+            setColorblind(mode, level);
+        }
+
+        public boolean isLeftArmDisabled() { return has(Condition.LEFT_ARM); }
+        public void setLeftArmDisabled(boolean v) { setLevel(Condition.LEFT_ARM, v ? Condition.LEFT_ARM.maxLevel() : 0); }
+        public boolean isRightArmDisabled() { return has(Condition.RIGHT_ARM); }
+        public void setRightArmDisabled(boolean v) { setLevel(Condition.RIGHT_ARM, v ? Condition.RIGHT_ARM.maxLevel() : 0); }
+        public boolean isLeftLegDisabled() { return has(Condition.LEFT_LEG); }
+        public void setLeftLegDisabled(boolean v) { setLevel(Condition.LEFT_LEG, v ? Condition.LEFT_LEG.maxLevel() : 0); }
+        public boolean isRightLegDisabled() { return has(Condition.RIGHT_LEG); }
+        public void setRightLegDisabled(boolean v) { setLevel(Condition.RIGHT_LEG, v ? Condition.RIGHT_LEG.maxLevel() : 0); }
+
+        public boolean isTunnelVision() { return has(Condition.TUNNEL_VISION); }
+        public void setTunnelVision(boolean v) { setLevel(Condition.TUNNEL_VISION, v ? Condition.TUNNEL_VISION.maxLevel() : 0); }
+        public boolean isMyopia() { return has(Condition.MYOPIA); }
+        public void setMyopia(boolean v) { setLevel(Condition.MYOPIA, v ? Condition.MYOPIA.maxLevel() : 0); }
+        public boolean isTremors() { return has(Condition.TREMORS); }
+        public void setTremors(boolean v) { setLevel(Condition.TREMORS, v ? Condition.TREMORS.maxLevel() : 0); }
+        public boolean isAdhd() { return has(Condition.ADHD); }
+        public void setAdhd(boolean v) { setLevel(Condition.ADHD, v ? Condition.ADHD.maxLevel() : 0); }
+        public boolean isVertigo() { return has(Condition.VERTIGO); }
+        public void setVertigo(boolean v) { setLevel(Condition.VERTIGO, v ? Condition.VERTIGO.maxLevel() : 0); }
+        public boolean isScoliosis() { return has(Condition.SCOLIOSIS); }
+        public void setScoliosis(boolean v) { setLevel(Condition.SCOLIOSIS, v ? Condition.SCOLIOSIS.maxLevel() : 0); }
+        public boolean isProsopagnosia() { return has(Condition.PROSOPAGNOSIA); }
+        public void setProsopagnosia(boolean v) { setLevel(Condition.PROSOPAGNOSIA, v ? Condition.PROSOPAGNOSIA.maxLevel() : 0); }
+        public boolean isSchizophrenia() { return has(Condition.SCHIZOPHRENIA); }
+        public void setSchizophrenia(boolean v) { setLevel(Condition.SCHIZOPHRENIA, v ? Condition.SCHIZOPHRENIA.maxLevel() : 0); }
     }
 
-    // Helper shortcuts
+
     public static DisabilityData getData(Player player) {
-        return player.getAttachedOrCreate(DISABILITY_DATA, () -> new DisabilityData(false, false, false, false, "none", false, false, false, false, false, false, false, false));
+        return player.getAttachedOrCreate(DISABILITY_DATA, DisabilityData::new);
+    }
+
+    public static int getLevel(Player player, Condition c) { return getData(player).getLevel(c); }
+
+    public static float getSeverity(Player player, Condition c) {
+        return (float) getData(player).getLevel(c) / c.maxLevel();
+    }
+
+    public static float getColourblindSeverity(Player player) {
+        return (float) getData(player).getColorblindLevel() / Condition.COLOURBLIND_MAX_LEVEL;
+    }
+
+    public static void setLevel(Player player, Condition c, int level) {
+        DisabilityData data = getData(player);
+        data.setLevel(c, level);
+        player.setAttached(DISABILITY_DATA, data);
     }
 
     public static boolean isLeftArmDisabled(Player player) { return getData(player).isLeftArmDisabled(); }
@@ -121,24 +153,8 @@ public class DisabilityDataHelper {
     public static boolean isSchizophrenia(Player player) { return getData(player).isSchizophrenia(); }
 
     public static void setFlag(Player player, String target, boolean value) {
-        DisabilityData data = getData(player);
-
-        switch (target.toLowerCase()) {
-            case "left_arm" -> data.setLeftArmDisabled(value);
-            case "right_arm" -> data.setRightArmDisabled(value);
-            case "left_leg" -> data.setLeftLegDisabled(value);
-            case "right_leg" -> data.setRightLegDisabled(value);
-            case "tunnel_vision" -> data.setTunnelVision(value);
-            case "myopia" -> data.setMyopia(value);
-            case "tremors" -> data.setTremors(value);
-            case "adhd" -> data.setAdhd(value);
-            case "vertigo" -> data.setVertigo(value);
-            case "scoliosis" -> data.setScoliosis(value);
-            case "prosopagnosia" -> data.setProsopagnosia(value);
-            case "schizophrenia" -> data.setSchizophrenia(value);
-        }
-
-        player.setAttached(DISABILITY_DATA, data);
+        Condition c = Condition.byId(target.toLowerCase(Locale.ROOT));
+        if (c != null) setLevel(player, c, value ? c.maxLevel() : 0);
     }
 
     public static boolean isHandDisabled(Player player, InteractionHand hand) {
