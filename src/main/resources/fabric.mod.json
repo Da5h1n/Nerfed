@@ -3,7 +3,7 @@
 	"id": "nerfed",
 	"version": "${version}",
 	"name": "Nerfed",
-	"description": "This mod adds Debufs and Nerfs to make your minecraft game funnier!",
+	"description": "This mod adds Debuffs and Nerfs to make your Minecraft game funnier!",
 	"authors": [
 		"Da5h1n"
 	],
@@ -27,6 +27,9 @@
 		],
 		"voicechat": [
 			"uk.da5h1n.nerfed.client.NerfedVoicechatPlugin"
+		],
+		"modmenu": [
+			"uk.da5h1n.nerfed.client.NerfedModMenu"
 		]
 	},
 	"mixins": [

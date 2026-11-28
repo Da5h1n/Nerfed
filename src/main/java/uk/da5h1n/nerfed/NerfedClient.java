@@ -14,8 +14,18 @@ import uk.da5h1n.nerfed.util.DisabilityDataHelper;
 public class NerfedClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        LocalConditions.register();
+        LocalDisabilityCommand.register();
+
+        NerfedSettings.get();
+        SettingsKeybind.register();
+        MenuButtons.register();
+
         ClientPlayNetworking.registerGlobalReceiver(DisabilitySyncPayload.TYPE, (payload, context) -> {
             context.client().execute(() -> {
+
+                LocalConditions.onServerSync();
+
                 Player self = context.player();
                 Entity entity = payload.entityId() == self.getId()
                         ? self
@@ -41,5 +51,6 @@ public class NerfedClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(TremorsHandler::clientTick);
         ClientTickEvents.END_CLIENT_TICK.register(AdhdHandler::clientTick);
         ClientTickEvents.END_CLIENT_TICK.register(SchizophreniaHandler::clientTick);
+        ClientTickEvents.END_CLIENT_TICK.register(TinnitusHandler::clientTick);
     }
 }

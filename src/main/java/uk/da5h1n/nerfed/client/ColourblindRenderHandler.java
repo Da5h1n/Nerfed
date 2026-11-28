@@ -52,6 +52,10 @@ public class ColourblindRenderHandler {
         return LEVEL_STRENGTH[Math.max(0, Math.min(level, 3))];
     }
 
+    private static float target(DisabilityDataHelper.DisabilityData data, Condition condition) {
+        return strengthOf(data.getLevel(condition)) * NerfedSettings.get().scaleFor(condition);
+    }
+
     private static float interp(float[][] knots, float s) {
         for (int i = 0; i < knots.length - 1; i++) {
             float x0 = knots[i][0], y0 = knots[i][1];
@@ -78,19 +82,19 @@ public class ColourblindRenderHandler {
 
         FilterFader.beginFrame();
 
-        float night = FilterFader.fade("night_blindness", strengthOf(data.getLevel(Condition.NIGHT_BLINDNESS)));
+        float night = FilterFader.fade("night_blindness", target(data, Condition.NIGHT_BLINDNESS));
         if (night > MIN_STRENGTH) {
             LiveUniforms.set(NIGHT_BLINDNESS, List.<Number>of(night));
             effects.add(NIGHT_BLINDNESS);
         }
 
-        float glare = FilterFader.fade("light_sensitivity", strengthOf(data.getLevel(Condition.LIGHT_SENSITIVITY)));
+        float glare = FilterFader.fade("light_sensitivity", target(data, Condition.LIGHT_SENSITIVITY));
         if (glare > MIN_STRENGTH) {
             LiveUniforms.set(LIGHT_SENSITIVITY, List.<Number>of(glare));
             effects.add(LIGHT_SENSITIVITY);
         }
 
-        float blind = FilterFader.fade("blindness", strengthOf(data.getLevel(Condition.BLINDNESS)));
+        float blind = FilterFader.fade("blindness", target(data, Condition.BLINDNESS));
         if (blind > MIN_STRENGTH) {
             Echolocation.setShown(blind);
             effects.add(BLINDNESS);
@@ -98,13 +102,13 @@ public class ColourblindRenderHandler {
             Echolocation.setShown(0f);
         }
 
-        float myopia = FilterFader.fade("myopia", strengthOf(data.getLevel(Condition.MYOPIA)));
+        float myopia = FilterFader.fade("myopia", target(data, Condition.MYOPIA));
         if (myopia > MIN_STRENGTH) {
             LiveUniforms.set(MYOPIA, List.<Number>of(interp(MYOPIA_RADIUS, myopia)));
             effects.add(MYOPIA);
         }
 
-        float dbl = FilterFader.fade("double_vision", strengthOf(data.getLevel(Condition.DOUBLE_VISION)));
+        float dbl = FilterFader.fade("double_vision", target(data, Condition.DOUBLE_VISION));
         if (dbl > MIN_STRENGTH) {
 
             double seconds = System.nanoTime() / 1.0e9;
@@ -114,7 +118,7 @@ public class ColourblindRenderHandler {
             effects.add(DOUBLE_VISION);
         }
 
-        float tunnel = FilterFader.fade("tunnel_vision", strengthOf(data.getLevel(Condition.TUNNEL_VISION)));
+        float tunnel = FilterFader.fade("tunnel_vision", target(data, Condition.TUNNEL_VISION));
         if (tunnel > MIN_STRENGTH) {
             LiveUniforms.set(TUNNEL_VISION, List.<Number>of(
                     interp(TUNNEL_INNER, tunnel), interp(TUNNEL_OUTER, tunnel)));

@@ -62,6 +62,9 @@
   "nerfed.condition.deafness.name": "Deafness",
   "nerfed.condition.deafness.desc": "Hearing loss: sounds are quieter, muffled and harder to make out.",
   "nerfed.condition.deafness.effect": "All sounds are quieter and muffled.",
+  "nerfed.condition.tinnitus.name": "Tinnitus",
+  "nerfed.condition.tinnitus.desc": "A ringing in your ears that no one else can hear.",
+  "nerfed.condition.tinnitus.effect": "A quiet, high-pitched ringing comes and goes. Higher levels are louder and more frequent.",
 
   "nerfed.condition.mute.name": "Mute",
   "nerfed.condition.mute.desc": "Unable to speak. Messages can't be sent in chat.",
@@ -69,20 +72,39 @@
 
   "nerfed.condition.tremors.name": "Tremors",
   "nerfed.condition.tremors.desc": "Involuntary shaking, most noticeable in the hands.",
+
   "nerfed.condition.adhd.name": "ADHD",
   "nerfed.condition.adhd.desc": "Attention-deficit/hyperactivity disorder affects focus, impulse control and energy levels.",
+
   "nerfed.condition.vertigo.name": "Vertigo",
   "nerfed.condition.vertigo.desc": "A sense of spinning or lost balance, often brought on by heights or movement.",
+
   "nerfed.condition.prosopagnosia.name": "Prosopagnosia",
   "nerfed.condition.prosopagnosia.desc": "Also called face blindness: difficulty recognising people by their faces.",
+
   "nerfed.condition.schizophrenia.name": "Schizophrenia",
   "nerfed.condition.schizophrenia.desc": "A long-term condition that can affect thinking, perception and emotions. Experiences vary widely from person to person.",
+
   "nerfed.condition.scoliosis.name": "Scoliosis",
   "nerfed.condition.scoliosis.desc": "A sideways curve of the spine, which can affect posture and comfort.",
 
   "nerfed.level.1": "Mild",
   "nerfed.level.2": "Moderate",
   "nerfed.level.3": "Severe",
+  "nerfed.render_mode.full": "Full",
+  "nerfed.render_mode.gentle": "Gentle",
+  "nerfed.render_mode.off": "Off",
+  "nerfed.risk.photosensitivity": "Photosensitivity",
+  "nerfed.risk.motion": "Motion",
+
+
+  "nerfed.settings.open": "Nerfed Settings",
+  "nerfed.settings.title": "Nerfed Settings",
+  "nerfed.settings.photosensitivity": "Flashing & bright effects",
+  "nerfed.settings.motion": "Camera motion effects",
+  "nerfed.settings.limited": "* Limited by safe mode",
+  "key.nerfed.open_settings": "Open Nerfed Settings",
+  "key.category.nerfed.main": "Nerfed",
 
 
   "item.nerfed.walking_stick": "Walking Stick"

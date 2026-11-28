@@ -176,6 +176,9 @@ public class SchizophreniaHandler {
 
         List<HallucinationSound> available = new ArrayList<>();
         for (HallucinationSound s : SOUNDS) {
+
+            if (s.startle() && !allowStartle) continue;
+
             long last = lastPlayed.getOrDefault(s.sound(), -1_000_000L);
             if (now - last < s.cooldownTicks()) continue;
             if (s.startle() && now - lastStartle < STARTLE_GLOBAL_COOLDOWN) continue;

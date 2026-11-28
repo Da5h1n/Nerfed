@@ -1,11 +1,8 @@
 package uk.da5h1n.nerfed.util;
 
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.world.entity.animal.feline.Cat;
-import uk.da5h1n.nerfed.util.DisabilityDataHelper.DisabilityData;
-
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 public enum Condition {
     LEFT_ARM("left_arm", Category.LIMBS, 1),
@@ -16,15 +13,20 @@ public enum Condition {
     TUNNEL_VISION("tunnel_vision", Category.VISION),
     MYOPIA("myopia", Category.VISION),
     NIGHT_BLINDNESS("night_blindness", Category.VISION),
-    LIGHT_SENSITIVITY("light_sensitivity", Category.VISION),
-    DOUBLE_VISION("double_vision", Category.VISION),
-    BLINDNESS("blindness", Category.VISION),
+
+    LIGHT_SENSITIVITY("light_sensitivity", Category.VISION, Risk.PHOTOSENSITIVITY),
+
+    DOUBLE_VISION("double_vision", Category.VISION, Risk.MOTION),
+
+    BLINDNESS("blindness", Category.VISION, Risk.PHOTOSENSITIVITY),
 
     DEAFNESS("deafness", Category.HEARING),
+    TINNITUS("tinnitus", Category.HEARING),
 
-    TREMORS("tremors", Category.NEUROLOGICAL),
+    TREMORS("tremors", Category.NEUROLOGICAL, Risk.MOTION),
+
     ADHD("adhd", Category.NEUROLOGICAL),
-    VERTIGO("vertigo", Category.NEUROLOGICAL),
+    VERTIGO("vertigo", Category.NEUROLOGICAL, Risk.MOTION),
     PROSOPAGNOSIA("prosopagnosia", Category.NEUROLOGICAL),
     SCHIZOPHRENIA("schizophrenia", Category.NEUROLOGICAL),
 
@@ -43,15 +45,26 @@ public enum Condition {
     private final String id;
     private final Category category;
     private final int maxLevel;
+    private final Set<Risk> risks;
 
-    Condition(String id, Category category) {
-        this(id, category, 3);
+    Condition(String id, Category category, Risk... risks) {
+        this(id, category, 3, risks);
     }
 
-    Condition(String id, Category category, int maxLevel) {
+    Condition(String id, Category category, int maxLevel, Risk... risks) {
         this.id = id;
         this.category = category;
         this.maxLevel = maxLevel;
+        this.risks = risks.length == 0 ? EnumSet.noneOf(Risk.class) : EnumSet.copyOf(List.of(risks));
+    }
+
+    public enum Risk {
+        /** Flashing, pulsing, strong brightness changes or high-contrast patterns. */
+        PHOTOSENSITIVITY,
+        /** Camera movement, shaking or swaying that can cause motion sickness. */
+        MOTION;
+
+        public String langKey() { return "nerfed.risk." + name().toLowerCase(); }
     }
 
 
@@ -59,6 +72,9 @@ public enum Condition {
     public Category category() { return category; }
     public int maxLevel() { return maxLevel; }
     public boolean isBinary() { return maxLevel <= 1; }
+
+    public boolean hasRisk(Risk risk) { return risks.contains(risk); }
+    public Set<Risk> risks() { return java.util.Collections.unmodifiableSet(risks); }
 
     public String nameKey() { return "nerfed.condition." + id + ".name"; }
     public String descKey() { return "nerfed.condition." + id + ".desc"; }

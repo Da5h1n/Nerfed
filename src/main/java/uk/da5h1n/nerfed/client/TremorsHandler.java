@@ -14,7 +14,7 @@ public class TremorsHandler {
         if (client.player == null || client.level == null) return;
 
         if (DisabilityDataHelper.isTremors(client.player)) {
-            float intensity = 0.15f * Strength.of(client.player, Condition.TREMORS);
+            float intensity = 0.15f * Strength.of(client.player, Condition.TREMORS) * NerfedSettings.get().scaleFor(Condition.TREMORS);
             float yawJitter = (RANDOM.nextFloat() - 0.5f) * intensity;
             float pitchJitter = (RANDOM.nextFloat() - 0.5f) * intensity;
 
